@@ -1,0 +1,12 @@
+# One-click deploy on Render: New + -> Blueprint -> pick this repo
+services:
+  - type: web
+    name: rock-vs-mine
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app.app:app --workers 2 --bind 0.0.0.0:$PORT --timeout 120
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3

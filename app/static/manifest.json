@@ -1,0 +1,15 @@
+{
+  "name": "Rock or Mine - Sonar Classifier",
+  "short_name": "Rock or Mine",
+  "description": "Classify sonar returns as rock or mine with four machine learning models.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#17ADCF",
+  "theme_color": "#1597C4",
+  "icons": [
+    {"src": "/static/icons/icon.svg", "sizes": "any", "type": "image/svg+xml"},
+    {"src": "/static/icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "/static/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}

@@ -1,0 +1,258 @@
+{
+  "best_model": "svm",
+  "best_model_name": "Support Vector Machine",
+  "selection_rule": "highest 10x5 CV accuracy on training set; tie-break on mine recall",
+  "feature_names": [
+    "band_01",
+    "band_02",
+    "band_03",
+    "band_04",
+    "band_05",
+    "band_06",
+    "band_07",
+    "band_08",
+    "band_09",
+    "band_10",
+    "band_11",
+    "band_12",
+    "band_13",
+    "band_14",
+    "band_15",
+    "band_16",
+    "band_17",
+    "band_18",
+    "band_19",
+    "band_20",
+    "band_21",
+    "band_22",
+    "band_23",
+    "band_24",
+    "band_25",
+    "band_26",
+    "band_27",
+    "band_28",
+    "band_29",
+    "band_30",
+    "band_31",
+    "band_32",
+    "band_33",
+    "band_34",
+    "band_35",
+    "band_36",
+    "band_37",
+    "band_38",
+    "band_39",
+    "band_40",
+    "band_41",
+    "band_42",
+    "band_43",
+    "band_44",
+    "band_45",
+    "band_46",
+    "band_47",
+    "band_48",
+    "band_49",
+    "band_50",
+    "band_51",
+    "band_52",
+    "band_53",
+    "band_54",
+    "band_55",
+    "band_56",
+    "band_57",
+    "band_58",
+    "band_59",
+    "band_60"
+  ],
+  "classes": {
+    "M": "Mine",
+    "R": "Rock"
+  },
+  "models": {
+    "logistic_regression": {
+      "name": "Logistic Regression",
+      "file": "logistic_regression.joblib",
+      "best_params": {
+        "clf__C": 1
+      },
+      "cv_mean": 0.7752941176470588,
+      "cv_std": 0.054461984529905735,
+      "baseline_test_accuracy": 0.6904761904761905,
+      "train_accuracy": 0.9518072289156626,
+      "test_accuracy": 0.6666666666666666,
+      "overfit_gap": 0.285140562248996,
+      "precision": 0.7222222222222222,
+      "recall": 0.5909090909090909,
+      "specificity": 0.75,
+      "f1": 0.65,
+      "roc_auc": 0.8613636363636363,
+      "missed_mines": 9.0,
+      "false_alarms": 5.0,
+      "confusion_matrix": [
+        [
+          15,
+          5
+        ],
+        [
+          9,
+          13
+        ]
+      ],
+      "latency_ms_per_sample": 0.03027523809572856
+    },
+    "svm": {
+      "name": "Support Vector Machine",
+      "file": "svm.joblib",
+      "best_params": {
+        "clf__C": 5,
+        "clf__gamma": 0.01,
+        "clf__kernel": "rbf"
+      },
+      "cv_mean": 0.8546524064171125,
+      "cv_std": 0.05145184200755961,
+      "baseline_test_accuracy": 0.7857142857142857,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.8571428571428571,
+      "overfit_gap": 0.1428571428571429,
+      "precision": 0.8333333333333334,
+      "recall": 0.9090909090909091,
+      "specificity": 0.8,
+      "f1": 0.8695652173913043,
+      "roc_auc": 0.9590909090909092,
+      "missed_mines": 2.0,
+      "false_alarms": 4.0,
+      "confusion_matrix": [
+        [
+          16,
+          4
+        ],
+        [
+          2,
+          20
+        ]
+      ],
+      "latency_ms_per_sample": 0.03918200000016657
+    },
+    "random_forest": {
+      "name": "Random Forest",
+      "file": "random_forest.joblib",
+      "best_params": {
+        "max_depth": null,
+        "max_features": "sqrt",
+        "min_samples_leaf": 1,
+        "n_estimators": 500
+      },
+      "cv_mean": 0.8199643493761141,
+      "cv_std": 0.07141768567469423,
+      "baseline_test_accuracy": 0.8095238095238095,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.7619047619047619,
+      "overfit_gap": 0.23809523809523814,
+      "precision": 0.7727272727272727,
+      "recall": 0.7727272727272727,
+      "specificity": 0.75,
+      "f1": 0.7727272727272727,
+      "roc_auc": 0.9068181818181819,
+      "missed_mines": 5.0,
+      "false_alarms": 5.0,
+      "confusion_matrix": [
+        [
+          15,
+          5
+        ],
+        [
+          5,
+          17
+        ]
+      ],
+      "latency_ms_per_sample": 0.6718594523804422
+    },
+    "knn": {
+      "name": "K-Nearest Neighbours",
+      "file": "knn.joblib",
+      "best_params": {
+        "clf__n_neighbors": 1,
+        "clf__p": 1,
+        "clf__weights": "uniform"
+      },
+      "cv_mean": 0.8506773618538324,
+      "cv_std": 0.062488132966759764,
+      "baseline_test_accuracy": 0.8095238095238095,
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.9047619047619048,
+      "overfit_gap": 0.09523809523809523,
+      "precision": 0.875,
+      "recall": 0.9545454545454546,
+      "specificity": 0.85,
+      "f1": 0.9130434782608695,
+      "roc_auc": 0.9022727272727273,
+      "missed_mines": 1.0,
+      "false_alarms": 3.0,
+      "confusion_matrix": [
+        [
+          17,
+          3
+        ],
+        [
+          1,
+          21
+        ]
+      ],
+      "latency_ms_per_sample": 0.05766552380865029
+    }
+  },
+  "data": {
+    "before_cleaning": {
+      "n_rows": 208,
+      "n_columns": 61,
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "out_of_range_values": 0,
+      "invalid_labels": 0,
+      "iqr_outlier_cells": 325,
+      "class_counts": {
+        "M": 111,
+        "R": 97
+      },
+      "feature_min": 0.0,
+      "feature_max": 1.0
+    },
+    "after_cleaning": {
+      "n_rows": 208,
+      "n_columns": 61,
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "out_of_range_values": 0,
+      "invalid_labels": 0,
+      "iqr_outlier_cells": 325,
+      "class_counts": {
+        "M": 111,
+        "R": 97
+      },
+      "feature_min": 0.0,
+      "feature_max": 1.0
+    },
+    "split": {
+      "train_rows": 166,
+      "test_rows": 42,
+      "train_class_counts": {
+        "M": 89,
+        "R": 77
+      },
+      "test_class_counts": {
+        "M": 22,
+        "R": 20
+      },
+      "test_size": 0.2,
+      "stratified": true,
+      "random_state": 1
+    }
+  },
+  "versions": {
+    "python": "3.12.3",
+    "scikit-learn": "1.8.0",
+    "numpy": "2.4.4",
+    "pandas": "3.0.2"
+  },
+  "trained_at": "2026-10-28T05:58:17+00:00"
+}

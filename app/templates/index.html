@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Classify sonar returns as rock or mine with four trained machine learning models.">
+  <meta name="theme-color" content="#1597C4">
+  <title>Rock or mine? Sonar classifier</title>
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/icon.svg') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <a class="skip" href="#workbench">Skip to the classifier</a>
+
+  <!-- Reusable decorative drawings -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="starfish" viewBox="0 0 100 100">
+        <path d="M50 4c4 0 6 6 8 15l4 18 19-4c10-2 16-2 17 2 1 4-4 8-12 13l-15 10 9 17c5 9 6 15 3 17-3 2-9-1-16-8L50 70 33 84c-7 7-13 10-16 8-3-2-2-8 3-17l9-17-15-10C6 43 1 39 2 35c1-4 7-4 17-2l19 4 4-18c2-9 4-15 8-15z" fill="#EE8A5A"/>
+        <path d="M50 14c2 0 3 4 4 10l3 15M50 14c-2 0-3 4-4 10l-3 15M88 37l-24 9M12 37l24 9M73 86L57 64M27 86l16-22" stroke="#F6B48C" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/>
+        <g fill="#FCD9C0" opacity=".9">
+          <circle cx="50" cy="22" r="2"/><circle cx="50" cy="33" r="2.2"/><circle cx="50" cy="46" r="2.6"/>
+          <circle cx="78" cy="38" r="1.8"/><circle cx="67" cy="42" r="2"/><circle cx="22" cy="38" r="1.8"/><circle cx="33" cy="42" r="2"/>
+          <circle cx="66" cy="76" r="1.8"/><circle cx="60" cy="66" r="2"/><circle cx="34" cy="76" r="1.8"/><circle cx="40" cy="66" r="2"/>
+        </g>
+      </symbol>
+      <symbol id="shell" viewBox="0 0 100 90">
+        <path d="M50 86 18 62C6 52 2 38 8 26 16 10 34 4 50 4s34 6 42 22c6 12 2 26-10 36z" fill="#F4BDC2"/>
+        <path d="M50 86 50 6M50 86 30 9M50 86 14 22M50 86 6 40M50 86 70 9M50 86 86 22M50 86 94 40" stroke="#E3929B" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+        <path d="M40 80h20l-4 8h-12z" fill="#E3929B"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="sea">
+    <svg class="foam-streaks" viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6"/></filter>
+        <filter id="softer" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="16"/></filter>
+      </defs>
+      <path d="M180 -40 C 330 120, 470 260, 640 330 S 980 520, 1260 640" stroke="#FFFFFF" stroke-opacity=".55" stroke-width="26" fill="none" filter="url(#softer)"/>
+      <path d="M180 -40 C 330 120, 470 260, 640 330 S 980 520, 1260 640" stroke="#FFFFFF" stroke-opacity=".8" stroke-width="5" fill="none" filter="url(#soft)"/>
+      <path d="M560 -60 C 680 60, 820 120, 960 170 S 1180 300, 1300 300" stroke="#FFFFFF" stroke-opacity=".45" stroke-width="20" fill="none" filter="url(#softer)"/>
+      <path d="M560 -60 C 680 60, 820 120, 960 170 S 1180 300, 1300 300" stroke="#FFFFFF" stroke-opacity=".7" stroke-width="4" fill="none" filter="url(#soft)"/>
+      <path d="M900 -40 C 960 60, 1060 110, 1260 140" stroke="#FFFFFF" stroke-opacity=".5" stroke-width="14" fill="none" filter="url(#softer)"/>
+      <path d="M340 380 C 460 430, 560 470, 700 560 S 960 700, 1260 760" stroke="#FFFFFF" stroke-opacity=".28" stroke-width="30" fill="none" filter="url(#softer)"/>
+      <path d="M340 380 C 460 430, 560 470, 700 560 S 960 700, 1260 760" stroke="#FFFFFF" stroke-opacity=".5" stroke-width="2.5" stroke-dasharray="1 7" stroke-linecap="round" fill="none"/>
+      <path d="M-80 380 C 120 470, 300 520, 420 620 S 640 800, 880 960" stroke="#FFFFFF" stroke-opacity=".35" stroke-width="40" fill="none" filter="url(#softer)"/>
+      <path d="M-80 380 C 120 470, 300 520, 420 620 S 640 800, 880 960" stroke="#FFFFFF" stroke-opacity=".6" stroke-width="4" fill="none" filter="url(#soft)"/>
+    </svg>
+    <span class="bubble b1"></span><span class="bubble b2"></span><span class="bubble b3"></span>
+    <span class="bubble b4"></span><span class="bubble b5"></span>
+
+    <header class="hero">
+      <div class="wrap hero__inner">
+        <div class="hero__copy">
+          <p class="hero__kicker">Sonar return classifier</p>
+          <h1>Rock or mine?</h1>
+          <p class="hero__lede">A sonar pulse bounces off something on the seabed. Its echo, split into
+            60 frequency bands, is enough for a trained model to tell a metal cylinder from a rock.</p>
+          <dl class="hero__facts">
+            <div><dt>Deployed model</dt><dd>{{ {'logistic_regression':'Logistic regression','svm':'SVM','random_forest':'Random forest','knn':'KNN'}[meta.best_model] }}</dd></div>
+            <div><dt>Cross-validated accuracy</dt><dd>{{ '%.1f' % (meta.models[meta.best_model].cv_mean * 100) }}%</dd></div>
+            <div><dt>Mines caught on test set</dt><dd>{{ '%.0f' % (meta.models[meta.best_model].recall * 100) }}%</dd></div>
+          </dl>
+        </div>
+        <figure class="scope" aria-live="polite">
+          <canvas id="scope" width="480" height="480" aria-hidden="true"></canvas>
+          <figcaption class="scope__readout">
+            <span class="scope__badge">
+              <span class="scope__verdict" id="scopeVerdict">Listening</span>
+              <span class="scope__sub" id="scopeSub">Choose a reading below</span>
+            </span>
+          </figcaption>
+        </figure>
+      </div>
+    </header>
+
+    <main>
+      <section class="workbench" id="workbench" aria-labelledby="wb-title">
+        <div class="wrap">
+          <h2 id="wb-title">Classify a reading</h2>
+
+          <div class="grid">
+            <div class="panel panel--input">
+              <div class="tabs" role="tablist" aria-label="Reading source">
+                <button role="tab" id="tab-sample" aria-selected="true" aria-controls="pane-sample">Test sample</button>
+                <button role="tab" id="tab-paste" aria-selected="false" aria-controls="pane-paste" tabindex="-1">Paste values</button>
+                <button role="tab" id="tab-file" aria-selected="false" aria-controls="pane-file" tabindex="-1">Upload CSV</button>
+              </div>
+
+              <div class="pane" role="tabpanel" id="pane-sample" aria-labelledby="tab-sample">
+                <p class="hint">These readings were held out during training, so the models have never seen them.</p>
+                <div class="samples" id="samples"></div>
+              </div>
+
+              <div class="pane" role="tabpanel" id="pane-paste" aria-labelledby="tab-paste" hidden>
+                <label for="values" class="hint">60 numbers between 0 and 1, separated by commas or spaces.</label>
+                <textarea id="values" rows="6" spellcheck="false" placeholder="0.0200, 0.0371, 0.0428, …"></textarea>
+                <p class="count" id="valueCount">0 of 60 values</p>
+              </div>
+
+              <div class="pane" role="tabpanel" id="pane-file" aria-labelledby="tab-file" hidden>
+                <label class="drop" id="drop">
+                  <input type="file" id="file" accept=".csv,text/csv">
+                  <svg class="drop__shell" aria-hidden="true"><use href="#shell"/></svg>
+                  <span class="drop__title">Drop a CSV file or browse</span>
+                  <span class="hint">One reading per row, 60 columns. A 61st label column is ignored.</span>
+                </label>
+                <p class="count" id="fileInfo"></p>
+              </div>
+
+              <fieldset class="models">
+                <legend>Model</legend>
+                <div class="seg" id="modelSeg">
+                  {% for key, m in meta.models.items() %}
+                  <label>
+                    <input type="radio" name="model" value="{{ key }}" {% if key == meta.best_model %}checked{% endif %}>
+                    <span>{{ {'logistic_regression':'Logistic','svm':'SVM','random_forest':'Forest','knn':'KNN'}[key] }}</span>
+                  </label>
+                  {% endfor %}
+                </div>
+              </fieldset>
+
+              <button class="primary" id="classify" type="button">Classify reading</button>
+              <p class="error" id="error" role="alert"></p>
+            </div>
+
+            <div class="panel panel--result" id="result" aria-live="polite">
+              <div class="empty" id="resultEmpty">
+                <svg class="empty__star" aria-hidden="true"><use href="#starfish"/></svg>
+                <p>Pick a reading and classify it. The verdict appears here, with what each of the four models thinks.</p>
+              </div>
+              <div id="resultBody" hidden>
+                <p class="verdict" id="verdict"></p>
+                <p class="verdict__meta" id="verdictMeta"></p>
+                <div class="meter" aria-hidden="true">
+                  <span>Rock</span>
+                  <div class="meter__track"><div class="meter__fill" id="meterFill"></div><div class="meter__mid"></div></div>
+                  <span>Mine</span>
+                </div>
+                <h3>Every model’s view</h3>
+                <ul class="votes" id="votes"></ul>
+                <p class="truth" id="truth"></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel panel--profile">
+            <div class="profile__head">
+              <h3>Echo profile</h3>
+              <p class="hint">Returned energy across the 60 bands, low frequency on the left. The shaded areas are the average mine and rock signatures from the training data.</p>
+            </div>
+            <svg id="profile" viewBox="0 0 600 180" preserveAspectRatio="none" role="img" aria-label="Echo profile of the current reading"></svg>
+            <div class="legend"><span class="lg lg--now">This reading</span><span class="lg lg--mine">Average mine</span><span class="lg lg--rock">Average rock</span></div>
+          </div>
+
+          <div class="panel panel--batch" id="batch" hidden>
+            <h3>Batch results</h3>
+            <div class="table-scroll"><table id="batchTable"><thead><tr><th>Row</th><th>Verdict</th><th>Confidence</th><th>Models agreeing</th></tr></thead><tbody></tbody></table></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Shoreline: where the sea meets the sand -->
+  <div class="shore" aria-hidden="true">
+    <svg viewBox="0 0 1440 260" preserveAspectRatio="none">
+      <!-- sand; the water above it is the container's background -->
+      <path d="M0 250C40 240 120 228 160 210S440 170 600 150 900 100 1040 80 1300 70 1440 40V262H0Z" fill="#F4E2B8"/>
+      <!-- pale wash just before the sand -->
+      <path d="M0 250C40 240 120 228 160 210S440 170 600 150 900 100 1040 80 1300 70 1440 40V2C1300 32 1180 22 1040 42S740 92 600 112 300 152 160 172 40 202 0 212Z" fill="#C4EEF3" opacity=".9"/>
+      <!-- foam lines -->
+      <path d="M0 212C40 202 120 190 160 172S440 132 600 112 900 62 1040 42 1300 32 1440 2" stroke="#FFFFFF" stroke-width="9" fill="none" stroke-linecap="round" opacity=".9"/>
+      <path d="M0 250C40 240 120 228 160 210S440 170 600 150 900 100 1040 80 1300 70 1440 40" stroke="#FFFFFF" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M0 232C40 222 120 210 160 192S440 152 600 132 900 82 1040 62 1300 52 1440 22" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="1 10" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <div class="sand">
+    <section class="compare" aria-labelledby="cmp-title">
+      <div class="wrap">
+        <h2 id="cmp-title">How the four models compare</h2>
+        <p class="section-lede">Each model was tuned with 5-fold grid search on the training set, then scored on 42 readings it never saw.
+          The deployed model was chosen on cross-validated accuracy, so the test set stays an honest final check.</p>
+
+        <div class="panel panel--table">
+          <div class="table-scroll">
+            <table class="metrics">
+              <thead>
+                <tr><th scope="col">Model</th><th scope="col">CV accuracy</th><th scope="col">Test accuracy</th>
+                  <th scope="col">Precision</th><th scope="col">Recall (mines)</th><th scope="col">F1</th>
+                  <th scope="col">ROC-AUC</th><th scope="col">Mines missed</th></tr>
+              </thead>
+              <tbody>
+                {% for key, m in meta.models.items() %}
+                <tr {% if key == meta.best_model %}class="is-best"{% endif %}>
+                  <th scope="row">{{ m.name }}{% if key == meta.best_model %} <span class="badge">deployed</span>{% endif %}</th>
+                  <td>{{ '%.3f' % m.cv_mean }} <small>± {{ '%.3f' % m.cv_std }}</small></td>
+                  <td>{{ '%.3f' % m.test_accuracy }}</td>
+                  <td>{{ '%.3f' % m.precision }}</td>
+                  <td>{{ '%.3f' % m.recall }}</td>
+                  <td>{{ '%.3f' % m.f1 }}</td>
+                  <td>{{ '%.3f' % m.roc_auc }}</td>
+                  <td>{{ m.missed_mines | int }} of {{ meta.data.split.test_class_counts.M }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="gallery">
+          <div class="chips" role="tablist" aria-label="Analysis charts">
+            {% set charts = [
+              ('07_model_comparison.png','Metrics'),
+              ('09_cross_validation.png','Cross-validation'),
+              ('05_confusion_matrices_tuned.png','Confusion matrices'),
+              ('06_roc_curves.png','ROC curves'),
+              ('08_baseline_vs_tuned.png','Baseline vs tuned'),
+              ('10_train_vs_test.png','Overfitting'),
+              ('02_mean_spectral_signature.png','Class signatures'),
+              ('11_feature_importance.png','Feature importance')] %}
+            {% for file, label in charts %}
+            <button class="chip" role="tab" data-src="{{ url_for('figures', name=file) }}" aria-selected="{{ 'true' if loop.first else 'false' }}">{{ label }}</button>
+            {% endfor %}
+          </div>
+          <figure class="chart">
+            <img id="chartImg" src="{{ url_for('figures', name='07_model_comparison.png') }}" alt="Metrics chart" loading="lazy">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="method" aria-labelledby="m-title">
+      <div class="wrap">
+        <h2 id="m-title">From raw echoes to a deployed model</h2>
+        <ol class="steps">
+          <li><h3>Clean</h3><p>Audited {{ meta.data.before_cleaning.n_rows }} rows for missing values, duplicates, out-of-range energies and invalid labels. Outliers were kept: every value is a physically valid echo.</p></li>
+          <li><h3>Split</h3><p>Stratified 80 / 20 split ({{ meta.data.split.train_rows }} train, {{ meta.data.split.test_rows }} test) so both sets keep the 53 / 47 mine-to-rock ratio.</p></li>
+          <li><h3>Train and tune</h3><p>Scaling sits inside each pipeline, fitted only on training folds. Grid search picks hyper-parameters; 50-fold repeated CV measures stability.</p></li>
+          <li><h3>Deploy</h3><p>A Flask API serves the saved models to this page, which works on phones, tablets and desktops and can be installed as an app.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <svg class="deco deco--star1" aria-hidden="true"><use href="#starfish"/></svg>
+      <svg class="deco deco--shell" aria-hidden="true"><use href="#shell"/></svg>
+      <svg class="deco deco--star2" aria-hidden="true"><use href="#starfish"/></svg>
+      <div class="wrap foot__inner">
+      </div>
+    </footer>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</body>
+</html>
